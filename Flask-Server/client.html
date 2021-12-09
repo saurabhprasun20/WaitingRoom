@@ -1,0 +1,39 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <title>Flask_Chat_App</title>
+  </head>
+  <body>
+
+    <h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
+    <div class="message_holder"></div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script type="text/javascript">
+      console.log("trying to connect now")
+      const socket = io.connect('http://127.0.0.1:5000');
+      console.log("Connected")
+
+      socket.on('connect', function() {
+          socket.send('User has connected')
+      })
+
+      var reponseServer = "";
+      console.log("Start receiving now")
+      socket.on('message', function(msg) {
+		console.log('Received message' + msg);
+		if (msg == "Continue"){
+		  reponseServer = msg;
+        }
+        $("#messages").append('<li>'+msg+'</li>');
+	});
+
+
+
+    </script>
+  <ul id="messages"></ul>
+
+  </body>
+  </html>
