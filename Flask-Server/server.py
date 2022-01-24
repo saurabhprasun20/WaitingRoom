@@ -1,11 +1,11 @@
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, send, emit
-import time, json, uuid
+import time, json, uuid,logging 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True)
-
+logger = logging.getLogger()
 
 time_now = 0
 msg = "Hello User. Please wait other users to join. Survey will start once minimum users will join. Max waiting time " \
@@ -32,17 +32,18 @@ def test_connect():
     data = json.load(f)
     global client_count, time_now
     minUserCount = data['minimumNoOfUser']
-
+    print("minimum user count is: " + str(minUserCount))
+    print("request remote address is: " + str(request.headers["X-Forwarded-For"]))
     if client_count == 0:
         time_now = int(time.time())
 
-    if str(request.remote_addr) not in user_list:
+    if str(request.headers["X-Forwarded-For"]) not in user_list:
         print("New user")
-        user_list.append(str(request.remote_addr))
+        user_list.append(str(request.headers["X-Forwarded-For"]))
         client_count += 1
     else:
         print("Old_user")
-        user_list.append(str(request.remote_addr))
+        user_list.append(str(request.headers["X-Forwarded-For"]))
 
     print("Total no of connected client " + str(client_count))
     # send(connected_msg_json, json=True)
@@ -58,7 +59,7 @@ def test_connect():
 def test_disconnect():
     print('Client disconnected')
     global client_count
-    user_list.remove(str(request.remote_addr))
+    user_list.remove(str(request.headers["X-Forwarded-For"]))
     set_user_list = set(user_list)
     client_count = len(set_user_list)
     print("Total no of connected client " + str(client_count))
