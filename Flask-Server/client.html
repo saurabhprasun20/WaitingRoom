@@ -2,6 +2,8 @@
   <html lang="en">
   <head>
     <title>Flask_Chat_App</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
   </head>
   <body>
 
@@ -10,10 +12,11 @@
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.0/socket.io.js"></script>
+
     <script type="text/javascript">
       console.log("trying to connect now")
-      const socket = io.connect('http://127.0.0.1:5000');
+      const socket = io.connect('http://130.60.24.65:8000');
       console.log("Connected")
 
       socket.on('connect', function() {
@@ -27,13 +30,16 @@
 		if (msg == "Continue"){
 		  reponseServer = msg;
         }
-        $("#messages").append('<li>'+msg+'</li>');
 	});
 
+      socket.on('my event', function(msg) {
+		console.log('Received message' + msg);
+		if (msg == "Continue"){
+		  reponseServer = msg;
+        }
 
-
+	});
     </script>
-  <ul id="messages"></ul>
 
   </body>
   </html>

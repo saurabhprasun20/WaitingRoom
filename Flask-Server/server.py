@@ -33,7 +33,7 @@ def test_connect():
     print("Connected")
     f = open('data.json')
     data = json.load(f)
-    global client_count, time_first_connection, random_chatroom_selection, previous_user_list, user_list
+    global client_count, time_first_connection, random_chatroom_selection, previous_user_list
     minUserCount = data['minimumNoOfUser']
     cycle_change = data['cycleChange']
     f.close()
@@ -72,7 +72,7 @@ def test_connect():
 @socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected')
-    global client_count,previous_user_list
+    global client_count, previous_user_list
     if str(request.headers["X-Forwarded-For"]) in previous_user_list:
         previous_user_list.remove(str(request.headers["X-Forwarded-For"]))
     user_list.remove(str(request.headers["X-Forwarded-For"]))
