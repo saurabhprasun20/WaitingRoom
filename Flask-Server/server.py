@@ -33,7 +33,7 @@ def test_connect():
     print("Connected")
     f = open('data.json')
     data = json.load(f)
-    global client_count, time_first_connection, random_chatroom_selection, previous_user_list
+    global client_count, time_first_connection, random_chatroom_selection, previous_user_list, user_list
     minUserCount = data['minimumNoOfUser']
     cycle_change = data['cycleChange']
     f.close()
