@@ -1,13 +1,15 @@
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, send, emit
-import time, json, uuid,logging 
+import time, json, uuid, logging
+from random import randrange
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True)
 logger = logging.getLogger()
 
-time_now = 0
+time_first_connection = 0
+random_chatroom_selection = -1
 msg = "Hello User. Please wait other users to join. Survey will start once minimum users will join. Max waiting time " \
       "is 5 min "
 
@@ -30,12 +32,22 @@ def test_connect():
     print("Connected")
     f = open('data.json')
     data = json.load(f)
-    global client_count, time_now
+    global client_count, time_first_connection, random_chatroom_selection
     minUserCount = data['minimumNoOfUser']
+    cycle_change = data['cycleChange']
+    f.close()
     print("minimum user count is: " + str(minUserCount))
     print("request remote address is: " + str(request.headers["X-Forwarded-For"]))
-    if client_count == 0:
-        time_now = int(time.time())
+    if client_count == 0 or cycle_change == 1:
+        time_first_connection = int(time.time())
+        random_chatroom_selection = randrange(4)
+        if cycle_change == 1:
+            with open("data.json", "r+") as jsonFile:
+                data = json.load(jsonFile)
+                data['cycleChange'] = 0
+                jsonFile.seek(0)  # rewind
+                json.dump(data, jsonFile)
+                jsonFile.truncate()
 
     if str(request.headers["X-Forwarded-For"]) not in user_list:
         print("New user")
@@ -47,9 +59,9 @@ def test_connect():
 
     print("Total no of connected client " + str(client_count))
     # send(connected_msg_json, json=True)
-    print("About to send the time when first user connected " + str(time_now))
-    send(time_now)
-    emit('my event', str(time_now))
+    print("About to send the time when first user connected " + str(time_first_connection))
+    send(str(time_first_connection)+'&'+str(random_chatroom_selection))
+    emit('my event', str(time_first_connection))
     # if(client_count > 5):
     if client_count > minUserCount:
         send("Continue", broadcast=True)
@@ -68,6 +80,10 @@ def test_disconnect():
 @socketio.on('my event')
 def handle_my_custom_event(data):
     emit('my response', data, broadcast=True)
+
+
+def initialize():
+    emit("disconnect", broadcast=True)
 
 
 if __name__ == '__main__':
