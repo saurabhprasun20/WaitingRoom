@@ -15,6 +15,7 @@ msg = "Hello User. Please wait other users to join. Survey will start once minim
 
 client_count = 0
 user_list = []
+previous_user_list = []
 
 
 @app.route('/')
@@ -32,7 +33,7 @@ def test_connect():
     print("Connected")
     f = open('data.json')
     data = json.load(f)
-    global client_count, time_first_connection, random_chatroom_selection
+    global client_count, time_first_connection, random_chatroom_selection, previous_user_list, user_list
     minUserCount = data['minimumNoOfUser']
     cycle_change = data['cycleChange']
     f.close()
@@ -42,6 +43,7 @@ def test_connect():
         time_first_connection = int(time.time())
         random_chatroom_selection = randrange(4)
         if cycle_change == 1:
+            previous_user_list = user_list
             with open("data.json", "r+") as jsonFile:
                 data = json.load(jsonFile)
                 data['cycleChange'] = 0
@@ -63,14 +65,16 @@ def test_connect():
     send(str(time_first_connection)+'&'+str(random_chatroom_selection))
     emit('my event', str(time_first_connection))
     # if(client_count > 5):
-    if client_count > minUserCount:
+    if client_count > minUserCount+len(previous_user_list):
         send("Continue", broadcast=True)
 
 
 @socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected')
-    global client_count
+    global client_count,previous_user_list
+    if str(request.headers["X-Forwarded-For"]) in previous_user_list:
+        previous_user_list.remove(str(request.headers["X-Forwarded-For"]))
     user_list.remove(str(request.headers["X-Forwarded-For"]))
     set_user_list = set(user_list)
     client_count = len(set_user_list)
