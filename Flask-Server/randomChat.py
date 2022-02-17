@@ -1,6 +1,6 @@
 from random import randrange
 
-init_max = 3
+init_max = 1
 chat_choice = [0,0,0,0]
 flag = 0
 last_choice = -1
@@ -54,7 +54,7 @@ def select_chat_room():
                     continue
         else:
             if check_max():
-                init_max = init_max+3
+                init_max = init_max + 1
             else:
                 continue
 
