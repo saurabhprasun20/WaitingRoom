@@ -16,30 +16,27 @@
 
     <script type="text/javascript">
       console.log("trying to connect now")
-      const socket = io.connect('http://130.60.24.65:8000');
+      const socket = io.connect('http://127.0.0.1:5000');
       console.log("Connected")
 
       socket.on('connect', function() {
-          socket.send('User has connected')
+          socket.send('Connected')
       })
 
       var reponseServer = "";
       console.log("Start receiving now")
       socket.on('message', function(msg) {
-		console.log('Received message' + msg);
-		if (msg == "Continue"){
-		  reponseServer = msg;
-        }
+        console.log('Received message '+ msg);
+		$("#messages").append('<li>'+msg+'</li>');
 	});
 
-      socket.on('my event', function(msg) {
-		console.log('Received message' + msg);
-		if (msg == "Continue"){
-		  reponseServer = msg;
-        }
-
+      $('#sendbutton').on('click', function() {
+		socket.send($('#myMessage').val());
+		$('#myMessage').val('');
 	});
     </script>
-
+  <ul id="messages"></ul>
+  <input type="text" id="myMessage">
+  <button id="sendbutton">Send</button>
   </body>
   </html>

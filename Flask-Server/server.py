@@ -1,6 +1,6 @@
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, send, emit
-import time, json, uuid, logging
+import time, json, uuid, logging, csv
 from random import randrange
 from randomChat import select_chat_room
 
@@ -27,6 +27,14 @@ def hello_world():
 @socketio.on('message')
 def handle_message(msg):
     print("Connected with the client with data " + msg)
+
+
+@socketio.on('worker_id')
+def handle_id(msg):
+    print("Got the worker id" + msg)
+    with open("complete_list.csv", 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(msg)
 
 
 @socketio.on('connect')
@@ -63,10 +71,10 @@ def test_connect():
     print("Total no of connected client " + str(client_count))
     # send(connected_msg_json, json=True)
     print("About to send the time when first user connected " + str(time_first_connection))
-    send(str(time_first_connection)+'&'+str(random_chatroom_selection))
+    send(str(time_first_connection) + '&' + str(random_chatroom_selection))
     emit('my event', str(time_first_connection))
     # if(client_count > 5):
-    if client_count > minUserCount+len(previous_user_list):
+    if client_count > minUserCount + len(previous_user_list):
         send("Continue", broadcast=True)
 
 
@@ -92,4 +100,4 @@ def initialize():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(debug=True)
