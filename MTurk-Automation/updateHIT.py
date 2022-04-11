@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from Increase_Assignment import increase_assignment_count
 
-import boto3, json
+import boto3, json, os
 
 region_name = 'us-east-1'
 
@@ -13,8 +13,13 @@ client = boto3.client(
     region_name=region_name,
 )
 
-f = open('../Flask-Server/data.json')
-data = json.load(f)
+data={}
+sibB = os.path.join(os.path.dirname(__file__), '..', 'Flask-Server')
+for filename in os.listdir(sibB):
+    if filename == 'data.json':
+        f = open(os.path.join(sibB,filename))
+        data = json.load(f)
+
 hit_id = data['hitId']
 print(hit_id)
 increase_count = data['minimumNoOfUser']
@@ -41,9 +46,11 @@ response_assignment = increase_assignment_count(hit_id, increase_count)
 print("Increase in count response is : ")
 print(response_assignment)
 
-with open("../Flask-Server/data.json", "r+") as jsonFile:
-    data = json.load(jsonFile)
-    data['cycleChange'] = 1
-    jsonFile.seek(0)  # rewind
-    json.dump(data, jsonFile)
-    jsonFile.truncate()
+for filename in os.listdir(sibB):
+    if filename == 'data.json':
+        with open(os.path.join(sibB,filename), "r+") as jsonFile:
+            data = json.load(jsonFile)
+            data['cycleChange'] = 1
+            jsonFile.seek(0)  # rewind
+            json.dump(data, jsonFile)
+            jsonFile.truncate()

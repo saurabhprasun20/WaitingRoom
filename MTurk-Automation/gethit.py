@@ -12,7 +12,7 @@ client = boto3.client(
 
 
 response = client.get_hit(
-    HITId='344M16OZLST69OW4ORXWSIQMF72NEM'
+    HITId='30QQTY5GNUYYVZ13YKVC03QZ1GZU77'
 )
 
 print(response)

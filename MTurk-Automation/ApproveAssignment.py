@@ -1,4 +1,4 @@
-import boto3,csv
+import boto3,csv,os
 
 region_name = 'us-east-1'
 
@@ -10,7 +10,8 @@ client = boto3.client(
     region_name=region_name,
 )
 
-with open("approve_assignment.csv", 'r', newline='') as file:
+current_dir= os.path.join(os.path.dirname(__file__))
+with open(os.path.join(current_dir,"approve_assignment.csv"), 'r', newline='') as file:
     reader = csv.DictReader(file)
     for row in reader:
         print(row['assignmentId'])

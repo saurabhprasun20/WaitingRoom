@@ -1,4 +1,4 @@
-import boto3, json, csv
+import boto3, json, csv, os
 import xml.etree.ElementTree as ET
 from datetime import datetime
 
@@ -12,25 +12,30 @@ client = boto3.client(
     region_name=region_name,
 )
 
-f = open('../Flask-Server/data.json')
-data = json.load(f)
+data={}
+sibB = os.path.join(os.path.dirname(__file__), '..', 'Flask-Server')
+for filename in os.listdir(sibB):
+    if filename == 'data.json':
+        f = open(os.path.join(sibB,filename))
+        data = json.load(f)
+        print(data)
 
 
 # This code is to update the question link.
-question_tree = ET.parse("question.xml")
+question_tree = ET.parse(os.path.dirname(__file__)+"/"+"question.xml")
 rootElement = question_tree.getroot()
 for child in rootElement.findall('{http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14'
                                  '/ExternalQuestion.xsd}ExternalURL'):
     child.text = data['question']
 
-question_tree.write("question.xml", encoding='UTF-8', xml_declaration=True)
+question_tree.write(os.path.dirname(__file__)+"/"+"question.xml", encoding='UTF-8', xml_declaration=True)
 ##
 f.close()
 
 # This will return $10,000.00 in the MTurk Developer Sandbox
 print(client.get_account_balance()['AvailableBalance'])
 
-question = open('question.xml', 'r').read()
+question = open(os.path.dirname(__file__)+"/"+'question.xml', 'r').read()
 new_hit = client.create_hit(
     # Title='Online survey for Political science department conducted by the University of Zurich',
     Title="Test--1",
@@ -61,13 +66,15 @@ print("A new HIT has been created. You can preview it here:")
 print("https://workersandbox.mturk.com/mturk/preview?groupId=" + new_hit['HIT']['HITGroupId'])
 print("HITID = " + new_hit['HIT']['HITId'] + " (Use to Get Results)")
 
-with open("history.csv", 'a', newline='') as file:
+with open(os.path.dirname(__file__)+"/"+"history.csv", 'a', newline='') as file:
     writer = csv.writer(file)
     writer.writerow([new_hit['HIT']['HITId'], datetime.now()])
 
-with open("../Flask-Server/data.json", "r+") as jsonFile:
-    data = json.load(jsonFile)
-    data["hitId"] = new_hit['HIT']['HITId']
-    jsonFile.seek(0)  # rewind
-    json.dump(data, jsonFile)
-    jsonFile.truncate()
+for filename in os.listdir(sibB):
+    if filename == 'data.json':
+        with open(os.path.join(sibB,filename), "r+") as jsonFile:
+            data = json.load(jsonFile)
+            data["hitId"] = new_hit['HIT']['HITId']
+            jsonFile.seek(0)  # rewind
+            json.dump(data, jsonFile)
+            jsonFile.truncate()

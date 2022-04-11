@@ -27,15 +27,7 @@ def hello_world():
 @socketio.on('message')
 def handle_message(msg):
     print("Connected with the client with data " + msg)
-
-
-@socketio.on('worker_id')
-def handle_id(msg):
-    print("Got the worker id" + msg)
-    with open("complete_list.csv", 'a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(msg)
-
+    
 
 @socketio.on('connect')
 def test_connect():

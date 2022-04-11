@@ -1,4 +1,4 @@
-import boto3,csv
+import boto3,csv,os
 
 region_name = 'us-east-1'
 
@@ -19,7 +19,7 @@ print(response)
 assignment_list = response['Assignments']
 print(assignment_list)
 for i in range(0, len(assignment_list)):
-    print(assignment_list[i]['WorkerId'])
-    with open("../Flask-Server/complete_list.csv", 'a', newline='') as file:
+    sibB = os.path.join(os.path.dirname(__file__), '..', 'Flask-Server')
+    with open(os.path.join(sibB,"complete_list.csv"), 'a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([assignment_list[i]['WorkerId'], assignment_list[i]['HITId']])
