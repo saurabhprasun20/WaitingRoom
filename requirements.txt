@@ -1,3 +1,4 @@
+boto3==1.20.26
 bidict==0.21.4
 certifi==2021.10.8
 charset-normalizer==2.0.9

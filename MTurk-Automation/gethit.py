@@ -12,14 +12,7 @@ client = boto3.client(
 
 
 response = client.get_hit(
-    HITId='3RTFSSG7UIKA2OFAXEBN1WTXGCLLW3'
+    HITId='344M16OZLST69OW4ORXWSIQMF72NEM'
 )
 
 print(response)
-
-
-response1 = client.list_hits()
-
-print("Listing all --->")
-print()
-print(response1)
