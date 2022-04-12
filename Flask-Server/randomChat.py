@@ -1,7 +1,20 @@
 from random import randrange
+import os, csv
 
-init_max = 1
+init_max = 3
 chat_choice = [0, 0, 0, 0]
+current_dir = os.path.join(os.path.dirname(__file__))
+with open(os.path.join(current_dir, "chat_choice.csv"), 'r', newline='') as file:
+    reader = csv.reader(file)
+    for row in reader:
+        print("row is")
+        print(row)
+        # if count == 1:
+        chat_choice = list(map(int, row))
+        # print(list(map(int, row)))
+        # chat_choice[0] = int(row['0'])
+
+print(chat_choice)
 flag = 0
 last_choice = -1
 
@@ -47,10 +60,14 @@ def select_chat_room():
             else:
                 continue
 
+    with open(os.path.join(current_dir, "chat_choice.csv"), 'w', newline='') as file:
+        writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(chat_choice)
     return final_choice
 
 
 for i in range(0,20):
     print(select_chat_room())
 
+# print(select_chat_room())
 print(chat_choice)
