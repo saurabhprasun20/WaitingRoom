@@ -1,20 +1,16 @@
 from random import randrange
-import os, csv
+import os, json
 
-init_max = 3
-chat_choice = [0, 0, 0, 0]
+data = {}
 current_dir = os.path.join(os.path.dirname(__file__))
-with open(os.path.join(current_dir, "chat_choice.csv"), 'r', newline='') as file:
-    reader = csv.reader(file)
-    for row in reader:
-        print("row is")
-        print(row)
-        # if count == 1:
-        chat_choice = list(map(int, row))
-        # print(list(map(int, row)))
-        # chat_choice[0] = int(row['0'])
+with open(os.path.join(current_dir, "chat_choice.json"), 'r+') as jsonFile:
+    data = json.load(jsonFile)
 
-print(chat_choice)
+
+chat_choice = data['chat_choice']
+init_max = data['init_max']
+print(data)
+print(init_max)
 flag = 0
 last_choice = -1
 
@@ -38,8 +34,6 @@ def check_max():
     chat_set = set(chat_choice)
     if len(chat_set) == 1:
         if init_max in chat_set:
-            # print("Chat choice is max")
-            # print(chat_choice)
             return True
 
 
@@ -60,14 +54,15 @@ def select_chat_room():
             else:
                 continue
 
-    with open(os.path.join(current_dir, "chat_choice.csv"), 'w', newline='') as file:
-        writer = csv.writer(file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(chat_choice)
+    with open(os.path.join(current_dir, "chat_choice.json"), 'w+') as jsonFile:
+        data['chat_choice'] = chat_choice
+        data['init_max'] = init_max
+        json.dump(data, jsonFile)
+
     return final_choice
 
 
-for i in range(0,20):
-    print(select_chat_room())
 
-# print(select_chat_room())
-print(chat_choice)
+
+print(select_chat_room())
+# print(chat_choice)
