@@ -2,7 +2,7 @@ from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, send, emit
 import time, json, uuid, logging, csv
 from random import randrange
-from randomChat import select_chat_room
+import randomChat
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -42,7 +42,7 @@ def test_connect():
     print("request remote address is: " + str(request.headers["X-Forwarded-For"]))
     if client_count == 0 or cycle_change == 1:
         time_first_connection = int(time.time())
-        random_chatroom_selection = select_chat_room()
+        random_chatroom_selection = randomChat.select_chat_room()
         if cycle_change == 1:
             previous_user_list = user_list
             with open("data.json", "r+") as jsonFile:
@@ -73,7 +73,7 @@ def test_connect():
 @socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected')
-    global client_count, previous_user_list
+    global client_count, previous_user_list, user_list
     if str(request.headers["X-Forwarded-For"]) in previous_user_list:
         previous_user_list.remove(str(request.headers["X-Forwarded-For"]))
     user_list.remove(str(request.headers["X-Forwarded-For"]))
