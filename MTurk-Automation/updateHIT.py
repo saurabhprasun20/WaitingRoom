@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from Increase_Assignment import increase_assignment_count
 
-import boto3, json, os
+import boto3, json, os,sys
 
 region_name = 'us-east-1'
 
@@ -28,7 +28,7 @@ print(increase_count)
 datetime_object = datetime.now()
 print("current time is:")
 print(datetime_object)
-extra_min = 30
+extra_min = 5
 expire_time = datetime_object + timedelta(minutes=extra_min)
 print("Time to expire is: ")
 print(expire_time)
@@ -46,11 +46,15 @@ response_assignment = increase_assignment_count(hit_id, increase_count)
 print("Increase in count response is : ")
 print(response_assignment)
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Flask-Server'))
+from randomChat import select_chat_room
+
 for filename in os.listdir(sibB):
     if filename == 'data.json':
         with open(os.path.join(sibB,filename), "r+") as jsonFile:
             data = json.load(jsonFile)
             data['cycleChange'] = 1
+            data['chatRoom'] = select_chat_room()
             jsonFile.seek(0)  # rewind
             json.dump(data, jsonFile)
             jsonFile.truncate()

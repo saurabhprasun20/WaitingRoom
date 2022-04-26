@@ -1,6 +1,6 @@
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, send, emit
-import time, json, uuid, logging, csv
+import time, json, uuid, logging
 from random import randrange
 import randomChat
 
@@ -27,7 +27,7 @@ def hello_world():
 @socketio.on('message')
 def handle_message(msg):
     print("Connected with the client with data " + msg)
-    
+
 
 @socketio.on('connect')
 def test_connect():
@@ -60,6 +60,8 @@ def test_connect():
         print("Old_user")
         user_list.append(str(request.headers["X-Forwarded-For"]))
 
+    print("User list after update")
+    print(user_list)
     print("Total no of connected client " + str(client_count))
     # send(connected_msg_json, json=True)
     print("About to send the time when first user connected " + str(time_first_connection))
@@ -76,7 +78,14 @@ def test_disconnect():
     global client_count, previous_user_list, user_list
     if str(request.headers["X-Forwarded-For"]) in previous_user_list:
         previous_user_list.remove(str(request.headers["X-Forwarded-For"]))
-    user_list.remove(str(request.headers["X-Forwarded-For"]))
+
+    print("User list before removing the user")
+    print(user_list)
+    print("User being removed")
+    print(request.headers["X-Forwarded-For"])
+    if (str(request.headers["X-Forwarded-For"]) in user_list):
+        print("Yes")
+        user_list.remove(str(request.headers["X-Forwarded-For"]))
     set_user_list = set(user_list)
     client_count = len(set_user_list)
     print("Total no of connected client " + str(client_count))

@@ -50,7 +50,7 @@ def select_chat_room():
             break
         else:
             if check_max():
-                init_max = init_max + 1
+                init_max = init_max + init_max
             else:
                 continue
 
@@ -64,5 +64,5 @@ def select_chat_room():
 
 
 
-print(select_chat_room())
+# print(select_chat_room())
 # print(chat_choice)
