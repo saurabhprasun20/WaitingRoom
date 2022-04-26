@@ -2,7 +2,6 @@ from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, send, emit
 import time, json, uuid, logging
 from random import randrange
-import randomChat
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -37,12 +36,12 @@ def test_connect():
     global client_count, time_first_connection, random_chatroom_selection, previous_user_list, user_list
     minUserCount = data['minimumNoOfUser']
     cycle_change = data['cycleChange']
+    random_chatroom_selection = data['chatRoom']
     f.close()
     print("minimum user count is: " + str(minUserCount))
     print("request remote address is: " + str(request.headers["X-Forwarded-For"]))
     if client_count == 0 or cycle_change == 1:
         time_first_connection = int(time.time())
-        random_chatroom_selection = randomChat.select_chat_room()
         if cycle_change == 1:
             previous_user_list = user_list
             with open("data.json", "r+") as jsonFile:
@@ -67,7 +66,12 @@ def test_connect():
     print("About to send the time when first user connected " + str(time_first_connection))
     send(str(time_first_connection) + '&' + str(random_chatroom_selection))
     emit('my event', str(time_first_connection))
+    print("Previous user list & it's length")
+    print(previous_user_list)
+    print(len(previous_user_list))
     # if(client_count > 5):
+    print("The minimum user required to open the chat room is:")
+    print(minUserCount+len(previous_user_list))
     if client_count > minUserCount + len(previous_user_list):
         send("Continue", broadcast=True)
 
