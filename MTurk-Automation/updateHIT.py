@@ -1,11 +1,13 @@
 from datetime import datetime, timedelta
 from Increase_Assignment import increase_assignment_count
-
-import boto3, json, os,sys
+import boto3, json, os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Flask-Server'))
+from randomChat import select_chat_room
 
 region_name = 'us-east-1'
 
 endpoint_url = 'https://mturk-requester-sandbox.us-east-1.amazonaws.com'
+#endpoint_url = 'https://mturk-requester.us-east-1.amazonaws.com'
 
 client = boto3.client(
     'mturk',
@@ -42,12 +44,9 @@ response = client.update_expiration_for_hit(
 print("Increase time response is: ")
 print(response)
 
-response_assignment = increase_assignment_count(hit_id, increase_count)
+response_assignment = increase_assignment_count(hit_id, 50)
 print("Increase in count response is : ")
 print(response_assignment)
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'Flask-Server'))
-from randomChat import select_chat_room
 
 for filename in os.listdir(sibB):
     if filename == 'data.json':
