@@ -10,15 +10,16 @@ client = boto3.client(
     endpoint_url=endpoint_url,
     region_name=region_name,
 )
-with open(os.path.dirname(__file__) + "/" + "pendingList1.csv", 'r', newline='') as file:
+
+with open(os.path.dirname(__file__) + "/" + "worker.csv", 'r', newline='') as file:
     reader = csv.DictReader(file)
     for row in reader:
         workerId = row['workerId']
         response = client.associate_qualification_with_worker(
-            QualificationTypeId="3HE7BV11M3BWRNG5BB1LW22WU2R1SX",
+            QualificationTypeId="3E5HMETZCUZTBEUSSOPS5NT65QV4VI",
             WorkerId=workerId,
-            IntegerValue=100,
-            SendNotification=True
+            IntegerValue=60,
+            SendNotification=False
         )
 
         print(response)
